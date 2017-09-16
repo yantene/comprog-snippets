@@ -1,0 +1,30 @@
+snippet     dijkstra
+abbr        get shortest path
+  # ダイクストラ法による単一始点最短経路問題ソルバ
+  # @param [Array]   g Edge の二重配列で表されるグラフ
+  # @param [Integer] s 開始ノード番号
+  # @return [Array]  各ノードまでの合計コストの格納された配列
+  # g は辺の集合の配列である。
+  # g_i には i 番ノードから生えているエッジの集合が配列として格納される。
+  # TODO: ヒープを実装する
+  def dijkstra(g, s)
+    que = []
+    d = Array.new(g.size) { Float::INFINITY }
+    d[s] = 0
+    que.push [0, s]
+
+    until que.empty?
+      v_cost, v = que.sort!.shift
+      next if d[v] < v_cost
+      g[v].each do |e|
+        if d[e.to] > d[v] + e.cost
+          d[e.to] = d[v] + e.cost
+          que.push [d[e.to], e.to]
+        end
+      end
+    end
+
+    d
+  end
+
+  Edge = Struct.new('Edge', :to, :cost)
