@@ -1,3 +1,39 @@
+snippet     priority_queue
+abbr        provide priority queue class
+	class PriorityQueue
+	  def initialize(desc = false)
+	    @a = []
+	    @s = desc ? -1 : 1
+	  end
+	  [:size, :empty?, :clear].each { |m| define_method(m) { @a.send(m) } }
+	  def enq(*vs)
+	    vs.each do |v|
+	      @a << v
+	      cd = @a.size
+	      pr = cd / 2
+	      until pr.zero? || @s * (@a[pr - 1] <=> @a[cd - 1]) <= 0
+	        @a[pr - 1], @a[cd - 1] = @a[cd - 1], @a[pr - 1]
+	        cd = pr
+	        pr = cd / 2
+	      end
+	    end
+	  end
+	  def deq
+	    @a[0], @a[-1] = @a[-1], @a[0]
+	    rs = @a.delete_at -1
+	    unless @a.empty?
+	      pr = 1
+	      cd = [pr * 2, pr * 2 + 1].select { |i| @a[i - 1] }.min_by { |i| @s * @a[i - 1] }
+	      until cd.nil? || @s * (@a[pr - 1] <=> @a[cd - 1]) <= 0
+	        @a[pr - 1], @a[cd - 1] = @a[cd - 1], @a[pr - 1]
+	        pr = cd
+	        cd = [pr * 2, pr * 2 + 1].select { |i| @a[i - 1] }.min_by { |i| @s * @a[i - 1] }
+	      end
+	    end
+	    rs
+	  end
+	end
+
 snippet     dijkstra
 abbr        get shortest path
 	# ダイクストラ法による単一始点最短経路問題ソルバ
